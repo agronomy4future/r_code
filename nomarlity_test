@@ -1,0 +1,12 @@
+#install package
+install.packages ("dplyr")
+library(olsrr)
+
+#data generation
+days<- c(114,116,116,117,117,118,119,120,121,123)
+yield<- c(4223,4150,4310,4223,4540,4482,4525,4350,4482,4611)
+dataA<- data.frame (days, yield)
+
+#normality test
+model <- lm(yield ~ days, data=dataA)
+ols_test_normality(model)
