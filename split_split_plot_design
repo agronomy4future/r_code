@@ -1,6 +1,22 @@
 #split-split plot design
+#with(Data_name,ssp.plot(Block, Main_plt, sub_plot, tertiary_plot, y_value))
 
+# to generate data
+sowing_date=rep(c("Early" ,"Normal"), each=12)
+herbicide=rep (rep(c("H0" ,"H1"), each=6),2)
+nitrogen=rep (rep(c("H0" ,"N1"), each=3),4)
+block=rep(c("Block 1" ,"Block 2", "Block 3"), times=8)
+yield=c(30,27,25,40,41,42,37,38,40,48,47,46,25,27,26,41,41,42,38,39,42,57,59,60)
+dataA=data.frame(sowing_date,herbicide,nitrogen,block,yield)
+
+# to open library
 install.packages("agricolae")
 library(agricolae)
 
-with(Data_name,ssp.plot(Block, Main_plt, sub_plot, tertiary_plot, y_value))
+# to analyze split-split plot design
+model= with(dataA,ssp.plot(block,sowing_date,herbicide,nitrogen,yield))
+
+##### alternative way to analyze split-split plot design #####
+ANOVA=aov(yield~block+sowing_date*herbicide*nitrogen+
+      Error(block/sowing_date/herbicide), data=dataA)
+summary(ANOVA)
