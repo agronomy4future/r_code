@@ -3,8 +3,19 @@ library (readr)
 github="https://raw.githubusercontent.com/agronomy4future/raw_data_practice/main/Fertilizer%20(One%20Way%20ANOVA).csv"
 dataA=data.frame(read_csv(url(github),show_col_types=FALSE))
 
-
 # ANCOVA
 library(car)
 ancova_model=aov(Yield ~ Fertilizer + Height, data=dataA)
 Anova(ancova_model, type="III")
+
+# Outcome
+Anova Table (Type III tests)
+
+Response: Yield
+             Sum Sq Df F value    Pr(>F)    
+(Intercept)  81.768  1 5089.53 < 2.2e-16 ***
+Fertilizer  213.904  2 6657.08 < 2.2e-16 ***
+Height        6.693  1  416.62 < 2.2e-16 ***
+Residuals     0.418 26                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
