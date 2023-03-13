@@ -16,7 +16,69 @@ library(agricolae)
 # to analyze split-split plot design
 model= with(dataA,ssp.plot(block,sowing_date,herbicide,nitrogen,yield))
 
+# Outcome
+ANALYSIS SPLIT-SPLIT PLOT:  yield 
+Class level information
+
+sowing_date 	:  Early Normal 
+herbicide 	:  H0 H1 
+nitrogen 	:  H0 N1 
+block 	:  Block 1 Block 2 Block 3 
+
+Number of observations:  24 
+
+Analysis of Variance Table
+
+Response: yield
+                               Df  Sum Sq Mean Sq F value    Pr(>F)    
+block                           2    3.08    1.54     NaN       NaN    
+sowing_date                     1   54.00   54.00  13.935  0.064856 .  
+Ea                              2    7.75    3.88                      
+herbicide                       1  864.00  864.00 628.364 1.504e-05 ***
+sowing_date:herbicide           1   73.50   73.50  53.455  0.001862 ** 
+Eb                              4    5.50    1.38                      
+nitrogen                        1 1204.17 1204.17 458.730 2.377e-08 ***
+nitrogen:sowing_date            1   54.00   54.00  20.571  0.001910 ** 
+nitrogen:herbicide              1    0.67    0.67   0.254  0.627877    
+nitrogen:sowing_date:herbicide  1   28.17   28.17  10.730  0.011260 *  
+Ec                              8   21.00    2.63                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+cv(a) = 4.9 %, cv(b) = 2.9 %, cv(c) = 4.1 %, Mean = 39.91667 
+
+
 ##### alternative way to analyze split-split plot design #####
 ANOVA=aov(yield~block+sowing_date*herbicide*nitrogen+
       Error(block/sowing_date/herbicide), data=dataA)
 summary(ANOVA)
+
+# Outcome
+Error: block
+      Df Sum Sq Mean Sq
+block  2  3.083   1.542
+
+Error: block:sowing_date
+            Df Sum Sq Mean Sq F value Pr(>F)  
+sowing_date  1  54.00   54.00   13.94 0.0649 .
+Residuals    2   7.75    3.88                 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Error: block:sowing_date:herbicide
+                      Df Sum Sq Mean Sq F value  Pr(>F)    
+herbicide              1  864.0   864.0  628.36 1.5e-05 ***
+sowing_date:herbicide  1   73.5    73.5   53.45 0.00186 ** 
+Residuals              4    5.5     1.4                    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Error: Within
+                               Df Sum Sq Mean Sq F value   Pr(>F)    
+nitrogen                        1 1204.2  1204.2 458.730 2.38e-08 ***
+sowing_date:nitrogen            1   54.0    54.0  20.571  0.00191 ** 
+herbicide:nitrogen              1    0.7     0.7   0.254  0.62788    
+sowing_date:herbicide:nitrogen  1   28.2    28.2  10.730  0.01126 *  
+Residuals                       8   21.0     2.6                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
