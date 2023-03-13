@@ -1,0 +1,10 @@
+# to upload data
+library (readr)
+github="https://raw.githubusercontent.com/agronomy4future/raw_data_practice/main/Fertilizer%20(One%20Way%20ANOVA).csv"
+dataA=data.frame(read_csv(url(github),show_col_types=FALSE))
+
+
+# ANCOVA
+library(car)
+ancova_model=aov(Yield ~ Fertilizer + Height, data=dataA)
+Anova(ancova_model, type="III")
