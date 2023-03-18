@@ -3,4 +3,4 @@
 library (readr)
 
 github="https://raw.githubusercontent.com/xxxxx.csv"
-dataA=data.frame(read_csv(url(github)))
+dataA=data.frame(read_csv(url(github),show_col_types=FALSE))
