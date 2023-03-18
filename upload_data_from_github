@@ -1,0 +1,6 @@
+# to uplopad data from github
+#install.packages("readr")
+library (readr)
+
+github="https://raw.githubusercontent.com/xxxxx.csv"
+dataA=data.frame(read_csv(url(github)))
