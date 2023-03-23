@@ -1,0 +1,76 @@
+#Full R code
+#If you copy and paste this code in you R console, you can obtain the same graph.
+
+library (readr)
+github="https://raw.githubusercontent.com/agronomy4future/raw_data_practice/main/wheat_yield_trend_over_60_years_by_faostat.csv"
+dataA=subset(data.frame(read_csv(url(github),show_col_types=FALSE)), location!="S.Korea")
+dataA$location=factor(dataA$location, levels=c("World","EU","US","Canada"))
+dataA$trend=factor(dataA$trend, 
+            levels=c("1STWorld","2NDWorld","3RDWorld",
+                     "1STEU","2NDEU","3RDEU",
+                     "1STUS","2NDUS","3RDUS",
+                     "1STCanada","2NDCanada","3RDCanada")) 
+FAOSTAT=ddply(dataA,c("location","year","trend"),summarise,mean=mean(na.rm=T,yield))
+
+library(ggplot2)
+ggplot(data=FAOSTAT, aes(x=year, y=mean))+ 
+  geom_line(size=0.5,linetype="solid")+ 
+  geom_point(aes(fill=trend, shape=trend),size=3.5, stroke=1.2)+
+  geom_smooth(aes(fill=trend, color=trend), method=lm, level=0.95, 
+              se=TRUE, linetype=1, size=1, formula=y~x)+
+  scale_shape_manual(values=rep(c(21,22,24),4))+
+  scale_fill_manual(values=rep(c("grey20","grey40","grey60"),4))+
+  scale_color_manual(values=rep(c("Black","Blue","Dark red"),4))+
+  scale_x_continuous(breaks=seq(1961,2021,10),limits=c(1961,2021))+
+  scale_y_continuous(breaks=seq(0,7,1),limits=c(0,7))+
+  geom_vline(xintercept=1961,linetype="dashed",color="Darkslategray")+
+  geom_vline(xintercept=1981,linetype="dashed",color="Darkslategray")+
+  geom_vline(xintercept=2001,linetype="dashed",color="Darkslategray")+
+  geom_vline(xintercept=2021,linetype= "dashed",color="Darkslategray")+
+  facet_wrap(~location) +
+  ylab(bquote("Wheat yield (ton" ~ ha^-1*')'))+
+  labs(x="Year (since 1961)") + 
+  theme_grey(base_size=18, base_family="serif")+
+  theme(legend.position="none",
+        axis.line=element_line(linewidth=0.5, colour="black"))+
+  windows(width=12, height=7)
+  
+##### 
+  
+#Full R code
+#If you copy and paste this code in you R console, you can obtain the same graph.
+
+library (readr)
+github="https://raw.githubusercontent.com/agronomy4future/raw_data_practice/main/wheat_yield_trend_over_60_years_by_faostat.csv"
+dataA=subset(data.frame(read_csv(url(github),show_col_types=FALSE)), location!="S.Korea"&location!="US")
+dataA$location=factor(dataA$location, levels=c("World","EU","Canada"))
+dataA$trend=factor(dataA$trend,
+                   levels=c("1STWorld","2NDWorld","3RDWorld",
+                            "1STEU","2NDEU","3RDEU",
+                            "1STCanada","2NDCanada","3RDCanada"))
+FAOSTAT=ddply(dataA,c("location","year","trend"),summarise,mean=mean(na.rm=T,yield))
+
+library(ggplot2)
+ggplot(data=FAOSTAT, aes(x=year, y=mean, group=trend))+ 
+  geom_line(size=0.5,linetype="solid")+ 
+  geom_point(aes(fill=trend, shape=trend),size=3.5, stroke=1.2)+
+  geom_smooth(aes(fill=trend, color=trend), method=lm, level=0.95, 
+              se=TRUE, linetype=1, size=1, formula=y~x)+
+  scale_shape_manual(values=rep(c(21,22,24),4))+
+  scale_fill_manual(values=rep(c("grey20","grey40","grey60"),3))+
+  scale_color_manual(values=rep(c("Black","Blue","Dark red"),3))+
+  scale_x_continuous(breaks=seq(1961,2021,10),limits=c(1961,2021))+
+  scale_y_continuous(breaks=seq(0,7,1),limits=c(0,7))+
+  geom_label(aes(fontface=6), x=1996, y=3.2, label="Global", size=5, fill="White", col="Darkslategray") +
+  geom_label(aes(fontface=6), x=1996, y=1.5, label="Canada", size=5, fill="White", col="Darkslategray") +
+  geom_label(aes(fontface=6), x=1996, y=5, label="EU", size=5, fill="White", col="Darkslategray") +
+  geom_vline(xintercept=1961,linetype="dashed",color="Darkslategray")+
+  geom_vline(xintercept=1981,linetype="dashed",color="Darkslategray")+
+  geom_vline(xintercept=2001,linetype="dashed",color="Darkslategray")+
+  geom_vline(xintercept=2021,linetype= "dashed",color="Darkslategray")+
+  ylab(bquote("Wheat yield (ton" ~ ha^-1*')'))+
+  labs(x="Year (since 1961)") + 
+  theme_grey(base_size=18, base_family="serif")+
+  theme(legend.position="none",
+        axis.line=element_line(linewidth=0.5, colour="black"))+
+  windows(width=12, height=7)
