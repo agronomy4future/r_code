@@ -24,7 +24,7 @@ ggplot(data=summary, aes(x=Days, y=mean))+
   geom_hline(yintercept=3095.074,linetype="dashed",color="Darkslategray")+
   facet_wrap(~location) +
   labs(x="Days (from 1st May unil 31st Oct)", y='Growing Degree Days (ºCd)') +
-    theme_grey(base_size=15, base_family="serif")+
+  theme_grey(base_size=15, base_family="serif")+
   theme(legend.position=c(0.95,0.17),
         legend.title=element_blank(),
         legend.key=element_rect(color=alpha("grey",.05), fill=alpha("grey",.05)),
