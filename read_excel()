@@ -1,6 +1,7 @@
 # to download pacakge
 install.packages("readxl")
-library (dplyr)
+library (readxl)
 
 # to upload excel file
-data_name=read_excel("Excel file name.xlsx", sheet=1)
+data_name=read_excel("Excel file name.xlsx", sheet=1, skip=1)
+    # skip=1; to delete the first row
