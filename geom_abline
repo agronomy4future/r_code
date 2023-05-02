@@ -3,4 +3,4 @@
  
  #geom_vline_hline
  geom_vline(xintercept=0, linetype="dashed", color="dark red", size=1) 
- geom_hline(yintercept=0, linetype="dashed", colo ="dark red", size=1)
+ geom_hline(yintercept=0, linetype="dashed", color="dark red", size=1)
