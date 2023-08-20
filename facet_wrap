@@ -1,0 +1,42 @@
+library (dplyr)
+library (stringr)
+library(ggplot2)
+
+Nitrogen= c(rep("N0", 5), rep("N1", 5))
+Cultivar_1= c(50,49,48,47,46,60,62,63,64,62)
+Cultivar_2= c(55,57,56,55,54,65,66,67,64,63)
+Cultivar_3= c(60,62,63,65,59,60,59,57,56,58)
+dataA= data.frame(Nitrogen, Cultivar_1, Cultivar_2, Cultivar_3)
+
+dataB= reshape2::melt(dataA[c("Nitrogen","Cultivar_1","Cultivar_2", "Cultivar_3")],
+                      id.vars=c("Nitrogen"))
+
+dataC= data.frame(dataB %>%
+                    group_by(Nitrogen, variable) %>%
+                    summarise(mean=mean(value), sd=sd(value), n=length(value), se=sd/sqrt(n)))
+
+dataC$Nitrogen= str_replace_all (dataC$Nitrogen, 'N0', 'No Fertilizer')
+dataC$Nitrogen= str_replace_all (dataC$Nitrogen, 'N1', 'Fertilizer')
+
+ggplot (data=dataC, aes(x=variable, y=mean, fill=Nitrogen)) +
+  geom_bar(stat="identity",position="dodge") +
+  geom_errorbar(aes(ymin= mean- se, ymax=mean + se),
+                position=position_dodge(0.9), width=0.2) +
+  scale_fill_manual(values= c("Gray","Dark green")) +
+  scale_y_continuous(breaks= seq(0, 70, 10), limits= c(0, 70))+
+  facet_wrap(~Nitrogen) +
+  labs(fill="Nitrogen", x="Cultivar", y="Yield") +
+  theme(axis.title= element_text (face= "plain", size= 17, color= "black"),
+        axis.text.x= element_text(size= 15),
+        axis.text.y= element_text(size= 15),
+        axis.line= element_line(size= 0.5, colour= "black"),
+        legend.position= 'bottom',
+        legend.key= element_rect(color= "white", fill= "white"),
+        legend.key.size= unit(0.5,"cm"),
+        legend.title= element_text(face="plain", size= 14, color= "Black"),
+        legend.text= element_text(face="plain", size= 14, color= "Black"),
+        strip.text.x= element_text(size=15),
+        strip.background = element_rect(color="Red", fill="Yellow", size=2,
+                                        linetype="solid"),
+        plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm")) +
+  windows(width=7, height=5)
