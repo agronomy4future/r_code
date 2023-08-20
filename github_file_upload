@@ -1,0 +1,5 @@
+#install.packages ("readr")
+library(readr)
+
+github= read_csv("https://raw.githubusercontent.com/**********************.csv")
+print(github)
