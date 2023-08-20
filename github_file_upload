@@ -1,5 +1,6 @@
 #install.packages ("readr")
 library(readr)
 
-github= read_csv("https://raw.githubusercontent.com/**********************.csv")
-print(github)
+github= "https://raw.githubusercontent.com/***/***/***/file_name.csv"
+dataA= data.frame(read_csv(url(github), show_col_types = FALSE))
+print(dataA)
