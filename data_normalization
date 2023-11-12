@@ -1,0 +1,44 @@
+### full code 
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+#data upload
+github="https://raw.githubusercontent.com/agronomy4future/raw_data_practice/main/wheat_Fe_uptake.csv"
+dataA= data.frame(read_csv(url(github), show_col_types= FALSE))
+
+# data normalization
+dataB= data.frame(dataA %>%
+                  group_by(Location, Season, Genotype) %>%
+                  mutate(
+                  Normalized_Fe_plant=(Fe-mean(Fe))/sd(Fe),
+                  Normalized_Fe_soil=(Iron_ton_ha-mean(Iron_ton_ha))/sd(Iron_ton_ha)
+                    ))
+
+# data reshape
+dataC= data.frame(dataB %>%
+                  group_by(Location, Season, Genotype, Normalized_Fe_soil, Stage) %>%
+                  spread(key=Stage, value= Normalized_Fe_plant))
+
+# graph
+FIGB= ggplot(data=dataC, aes(x=Normalized_Fe_soil, y=Maturity))+
+  geom_point(aes(fill=as.factor(Season), shape=as.factor(Season)),color="black", size=5) +
+  scale_fill_manual(values= c("grey15","grey35","grey55")) +
+  scale_shape_manual(values= c(21,22,24)) +
+  scale_x_continuous(breaks=seq(-5,5,2.5),limits=c(-5,5)) + 
+  scale_y_continuous(breaks=seq(-5,5,2.5),limits=c(-5,5)) +  
+  geom_vline(xintercept=0, linetype="dashed", color="black") +
+  geom_hline(yintercept=0, linetype="dashed", color= "black") +
+  facet_wrap(~ Location) +
+  annotate("segment", x=20, xend=40, y=Inf, yend=Inf, color="black",lwd=1)+
+  labs(x="Fe (Mg/ha) in soil", y="Plant Fe uptake (%) at maturity") +
+  theme_classic(base_size=18, base_family="serif") +
+  theme(legend.position=c(0.90,0.17),
+        legend.title=element_blank(),
+        legend.key=element_rect(color="white", fill="white"),
+        legend.text=element_text(family="serif", face="plain", size=13, color="black"),
+        legend.background= element_rect(fill="white"),
+        strip.background=element_rect(color="white", linewidth=0.5, linetype="solid"),
+        axis.line = element_line(linewidth = 0.5, colour="black"))
+FIGB + windows(width=9, height=5)
