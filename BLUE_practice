@@ -1,0 +1,66 @@
+library(readr)
+library(lme4)
+library(Matrix)
+library(dplyr)
+library (stringr)
+
+github="https://raw.githubusercontent.com/agronomy4future/raw_data_practice/main/genotype_transgenic_line_with_fertilizer.csv"
+dataA= data.frame(read_csv(url(github), show_col_types= FALSE))
+dataA= subset(dataA, genotype!="Transgeic_line")
+
+BLUE_0_kg_ha=lmer(GN ~ 0 + (1|genotype), data=subset(dataA, fertilizer=="0"))
+BLUE_150_kg_ha=lmer(GN ~ 0 + (1|genotype), data=subset(dataA, fertilizer=="150"))
+BLUE_200_kg_ha=lmer(GN ~ 0 + (1|genotype), data=subset(dataA, fertilizer=="200"))
+
+BLUE_0= predict (BLUE_0_kg_ha)
+BLUE_150= predict (BLUE_150_kg_ha)
+BLUE_200=predict (BLUE_200_kg_ha)
+
+dataA$predicted_0 <- NA
+dataA$predicted_0[dataA$fertilizer==0] <- BLUE_0
+dataA$predicted_150 <- NA
+dataA$predicted_150[dataA$fertilizer==150] <- BLUE_150
+dataA$predicted_200 <- NA
+dataA$predicted_200[dataA$fertilizer==200] <- BLUE_200
+
+dataB= dataA %>%
+  mutate(BLUE_GN= coalesce(predicted_0, predicted_150, predicted_200))
+dataB= dataB[,-c(7,8,9)]
+
+dataB$traits= ifelse(dataB$genotype=="cv1"|dataB$genotype=="cv2", "+ susceptible", 
+                     ifelse(dataB$genotype=="cv4"|dataB$genotype=="cv5", "- susceptible", "resistance"))
+
+dataC = data.frame(dataB %>%
+                     group_by(traits, resistance, fertilizer) %>%
+                     dplyr::summarize(across(c(GN, BLUE_GN), 
+                                             .fns= list(Mean=~mean(., na.rm= TRUE), 
+                                                        SD= ~sd(., na.rm= TRUE), 
+                                                        n=~length(.),
+                                                        se=~sd(.,na.rm= TRUE)/sqrt(length(.))))))
+
+
+dataC$fertilizer= str_replace_all(dataC$fertilizer, '\\b0\\b', '0 kg/ha')
+dataC$fertilizer= str_replace_all (dataC$fertilizer, '150','150 kg/ha')
+dataC$fertilizer= str_replace_all (dataC$fertilizer, '200','200 kg/ha')
+
+library (ggplot2)
+FIG1=ggplot(data=dataC, aes(x=traits, y=BLUE_GN_Mean, fill=resistance))+
+  geom_bar(stat="identity",position="dodge", width= 0.7, size=1) +
+  scale_fill_manual(values=c("grey75","cadetblue"))+
+  geom_errorbar(aes(ymin=BLUE_GN_Mean-BLUE_GN_se, ymax=BLUE_GN_Mean+BLUE_GN_se), 
+                position=position_dodge(0.9), width=0.5) +
+  scale_y_continuous(breaks=seq(0,3500,500), limits = c(0,3500)) +
+  facet_wrap (~ fertilizer, scales="free_y") +
+  labs(x="Genotype", y="Grain number") +
+  theme_classic(base_size=18, base_family="serif")+
+  theme(legend.position="bottom",
+        legend.title=element_text(family="serif", face="plain",
+                                  size=13, color= "Black"),
+        legend.key=element_rect(color="white", fill="white"),
+        legend.text=element_text(family="serif", face="plain",
+                                 size=13, color= "Black"),
+        legend.background=element_rect(fill="white"),
+        axis.line=element_line(linewidth=0.5, colour="black"),
+        strip.background=element_rect(color="white", 
+                                      linewidth=0.5,linetype="solid"))
+FIG1 + windows(width=13, height=5)
